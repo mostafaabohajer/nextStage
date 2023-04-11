@@ -98,6 +98,12 @@ class CompanyController extends Controller
     public function update(CompanyRequest $request, Company $company)
     {
         try{
+            if($request->logo){
+                $imageName = time().'.'.$request->logo->extension();
+                $request->logo->move(storage_path('app/public'), $imageName);
+                $request = new Request($request->all());
+                $request->merge(['logo' => \Request::root() .'/storage/app/public/'.$imageName]);
+            }
             $request->request->remove('_token');
             $request->request->remove('_method');
             Company::where('id', $company->id)
